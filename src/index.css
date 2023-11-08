@@ -1,0 +1,6 @@
+@import "./styles/loader.css";
+@import "./styles/loading.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

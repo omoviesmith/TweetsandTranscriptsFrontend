@@ -1,0 +1,21 @@
+{
+  "general": {
+    "privacyPolicy": "Privacy policy",
+    "terms": "terms and conditions",
+    "title": "Ask my Document"
+  },
+  "extractor": {
+    "extract": "Extract tweets and Transcripts",
+    "limitHint": "You'll be able to start a conversation based on the document uploaded. You can upgrade your account to increase your limits",
+    "extractTweet": "Extract Tweets",
+    "extractTranscripts": "Extract Transcripts",
+    "startConversation": "Start conversation",
+    "agreeWith": "By starting a conversation, you agree with our",
+    "enterTwitter": "Enter the Twitter username",
+    "enterYoutube": "Enter the Youtube URL",
+    "extractAction": "Extract",
+    "processing": "Processing...",
+    "invalidTwitterInput": "Twitter username is not valid",
+    "invalidYoutubeInput": "Youtube URL is not valid"
+  }
+}
