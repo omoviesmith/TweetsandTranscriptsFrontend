@@ -14,6 +14,7 @@
     "enterTwitter": "Enter the Twitter username",
     "enterYoutube": "Enter the Youtube URL",
     "extractAction": "Extract",
+    "download": "Download",
     "processing": "Processing...",
     "invalidTwitterInput": "Twitter username is not valid",
     "invalidYoutubeInput": "Youtube URL is not valid"

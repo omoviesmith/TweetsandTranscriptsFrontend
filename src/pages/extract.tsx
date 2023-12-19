@@ -5,9 +5,11 @@ import { useTranslation } from "react-i18next";
 import { useMutation } from "@tanstack/react-query";
 
 //
+import { IoMdDownload } from "react-icons/io";
 import { MdOutlineSummarize } from "react-icons/md";
 
 //
+import axiosInstance from "../utils/axios";
 import { REGEX_TWITTER, REGEX_YOUTUBE } from "../utils/constants";
 
 /**
@@ -23,18 +25,52 @@ export default function ExtractPage() {
     "twitter",
   );
 
+  const [downloadLink, setDownloadLink] = useState<string>();
+
   //
   const mutation = useMutation({
     mutationFn: async (valueToUse: string) => {
-      return { valueToUse };
+      const handleProgress = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onUploadProgress: (progressEvent: any) => {
+          const percentCompleted = Math.max(
+            Math.min(
+              Math.round(
+                (progressEvent.loaded * 100) / (progressEvent.total ?? 100),
+              ),
+              100,
+            ),
+            0,
+          );
+          setSubmitProgress(percentCompleted);
+        },
+      };
+
+      if (uploadMode === "twitter") {
+        return axiosInstance.post(
+          "/extract_tweets",
+          { username: valueToUse },
+          handleProgress,
+        );
+      } else {
+        // Diarization ko laagi need to add a toggle in the UI, as this value is provided by user
+        return axiosInstance.post(
+          "/process_audio",
+          { url: [valueToUse], diarization: false },
+          handleProgress,
+        );
+      }
     },
     onSuccess: (data) => {
-      console.log(data);
-      setSubmitProgress(30);
+      if (uploadMode === "twitter") {
+        setDownloadLink(data.data.download_link);
+      } else {
+        // TODO:: Api is not responding
+      }
     },
     onError: (error) => {
       console.log(error);
-      toast.error("Unable to update the file");
+      toast.error("Unable to process your request");
     },
   });
 
@@ -46,13 +82,13 @@ export default function ExtractPage() {
 
     //
     if (uploadMode === "twitter") {
-      const success = REGEX_TWITTER.test(inputValue);
+      const success = inputValue.match(REGEX_TWITTER);
       if (!success) {
         toast.error(t("extractor.invalidTwitterInput"));
         return;
       }
     } else {
-      const success = REGEX_YOUTUBE.test(inputValue);
+      const success = inputValue.match(REGEX_YOUTUBE);
       if (!success) {
         toast.error(t("extractor.invalidYoutubeInput"));
         return;
@@ -89,7 +125,21 @@ export default function ExtractPage() {
           </p>
         </div>
 
-        {isSubmitting && (
+        {downloadLink && (
+          <div className="flex h-full flex-grow items-center justify-center">
+            <a
+              download
+              href={downloadLink}
+              onClick={() => setDownloadLink(undefined)}
+              className="flex items-center gap-3 rounded-full bg-gray-900 px-6 py-3 text-sm text-gray-100 shadow transition-all duration-300 hover:scale-[1.03] disabled:cursor-not-allowed disabled:bg-gray-500 disabled:hover:scale-100"
+            >
+              <IoMdDownload size={20} />
+              <span>{t("extractor.download")}</span>
+            </a>
+          </div>
+        )}
+
+        {!downloadLink && isSubmitting && (
           <div className="h-full flex-grow">
             <div className="flex h-full flex-col items-center justify-center px-2 py-10 md:px-5 lg:px-10">
               <div className="h-5 w-full overflow-hidden rounded-full border border-gray-300 bg-gray-100 shadow">
@@ -106,7 +156,7 @@ export default function ExtractPage() {
           </div>
         )}
 
-        {!isSubmitting && (
+        {!downloadLink && !isSubmitting && (
           <div className="flex-grow">
             {/* Mode switch */}
             <div className="mt-10 px-2 md:px-5 lg:px-10">
