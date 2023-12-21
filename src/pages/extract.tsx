@@ -20,6 +20,7 @@ export default function ExtractPage() {
 
   //
   const [inputValue, setInputValue] = useState<string>("");
+  const [diarization, setDiarization] = useState<boolean>(false);
   const [submitProgress, setSubmitProgress] = useState<number>(20);
   const [uploadMode, setUploadMode] = useState<"twitter" | "youtube">(
     "twitter",
@@ -29,7 +30,7 @@ export default function ExtractPage() {
 
   //
   const mutation = useMutation({
-    mutationFn: async (valueToUse: string) => {
+    mutationFn: async ({ username, url }: ImutateOptions) => {
       const handleProgress = {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onUploadProgress: (progressEvent: any) => {
@@ -49,24 +50,20 @@ export default function ExtractPage() {
       if (uploadMode === "twitter") {
         return axiosInstance.post(
           "/extract_tweets",
-          { username: valueToUse },
+          { username },
           handleProgress,
         );
       } else {
         // Diarization ko laagi need to add a toggle in the UI, as this value is provided by user
         return axiosInstance.post(
           "/process_audio",
-          { url: [valueToUse], diarization: false },
+          { url: url ?? [], diarization },
           handleProgress,
         );
       }
     },
     onSuccess: (data) => {
-      if (uploadMode === "twitter") {
-        setDownloadLink(data.data.download_link);
-      } else {
-        // TODO:: Api is not responding
-      }
+      setDownloadLink(data.data.download_link);
     },
     onError: (error) => {
       console.log(error);
@@ -87,16 +84,26 @@ export default function ExtractPage() {
         toast.error(t("extractor.invalidTwitterInput"));
         return;
       }
+
+      mutation.mutate({ username: inputValue });
     } else {
-      const success = inputValue.match(REGEX_YOUTUBE);
-      if (!success) {
+      const splittedItems = inputValue.split(",");
+      const validItems: string[] = [];
+
+      for (const item of splittedItems) {
+        const success = item.match(REGEX_YOUTUBE);
+        if (success) validItems.push(item);
+      }
+
+      if (!validItems.length) {
         toast.error(t("extractor.invalidYoutubeInput"));
         return;
       }
+
+      mutation.mutate({ url: validItems });
     }
 
     //
-    mutation.mutate(inputValue);
     setInputValue("");
   }
 
@@ -195,6 +202,22 @@ export default function ExtractPage() {
                 className="h-14 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:cursor-not-allowed"
               />
 
+              {uploadMode === "youtube" && (
+                <div className="my-5">
+                  <fieldset className="flex items-center">
+                    <label>{t("extractor.diarization")}</label>
+
+                    <input
+                      id="diarization"
+                      type="checkbox"
+                      checked={diarization}
+                      onChange={() => setDiarization((prev) => !prev)}
+                      className="ml-2 cursor-pointer focus:ring-0"
+                    />
+                  </fieldset>
+                </div>
+              )}
+
               <div className="mt-10 flex justify-end">
                 <button
                   onClick={() => handleOps()}
@@ -229,4 +252,10 @@ export default function ExtractPage() {
       </div>
     </div>
   );
+}
+
+//
+interface ImutateOptions {
+  username?: string;
+  url?: string[];
 }

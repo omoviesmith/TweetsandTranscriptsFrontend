@@ -12,10 +12,11 @@
     "startConversation": "Start conversation",
     "agreeWith": "By starting a conversation, you agree with our",
     "enterTwitter": "Enter the Twitter username",
-    "enterYoutube": "Enter the Youtube URL",
+    "enterYoutube": "Enter one or more Youtube URLs separated by comma",
     "extractAction": "Extract",
     "download": "Download",
     "processing": "Processing...",
+    "diarization": "Diarization",
     "invalidTwitterInput": "Twitter username is not valid",
     "invalidYoutubeInput": "Youtube URL is not valid"
   }
