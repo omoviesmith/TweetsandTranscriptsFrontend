@@ -91,8 +91,8 @@ export default function ExtractPage() {
       const validItems: string[] = [];
 
       for (const item of splittedItems) {
-        const success = item.match(REGEX_YOUTUBE);
-        if (success) validItems.push(item);
+        const success = item.trim().match(REGEX_YOUTUBE);
+        if (success) validItems.push(item.trim());
       }
 
       if (!validItems.length) {
@@ -112,6 +112,11 @@ export default function ExtractPage() {
     if (key !== "Enter") return;
     handleOps();
   }
+
+  //
+  useEffect(() => {
+    setInputValue("");
+  }, [uploadMode]);
 
   //
   useEffect(() => {
