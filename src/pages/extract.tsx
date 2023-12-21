@@ -235,8 +235,8 @@ export default function ExtractPage() {
           </div>
         )}
 
-        {/* More content */}
-        <div className="px-2 text-sm md:px-5 lg:px-10">
+        {/* Footer */}
+        {/* <div className="px-2 text-sm md:px-5 lg:px-10">
           <p>{t("extractor.agreeWith")}</p>
 
           <div className="flex gap-1">
@@ -248,7 +248,7 @@ export default function ExtractPage() {
               {t("general.terms")}
             </a>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

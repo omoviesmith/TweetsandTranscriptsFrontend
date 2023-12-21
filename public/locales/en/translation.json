@@ -5,8 +5,8 @@
     "title": "Ask my Document"
   },
   "extractor": {
-    "extract": "Extract tweets and Transcripts",
-    "limitHint": "You'll be able to start a conversation based on the document uploaded. You can upgrade your account to increase your limits",
+    "extract": "Extract Tweets and Transcripts",
+    "limitHint": "You'll be able to extract tweets from Twitter using a username or extract Transcripts from Youtube video using the video urls",
     "extractTweet": "Extract Tweets",
     "extractTranscripts": "Extract Transcripts",
     "startConversation": "Start conversation",
